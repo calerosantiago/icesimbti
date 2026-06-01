@@ -1,0 +1,453 @@
+{
+  "questionnaire": {
+    "questions": [
+      {
+        "id": 1,
+        "text": "You regularly make new friends.",
+        "dimension": "E"
+      },
+      {
+        "id": 2,
+        "text": "You feel comfortable just walking up to someone you find interesting and striking up a conversation.",
+        "dimension": "E"
+      },
+      {
+        "id": 3,
+        "text": "At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.",
+        "dimension": "I"
+      },
+      {
+        "id": 4,
+        "text": "You prefer to work alone rather than in a team.",
+        "dimension": "I"
+      },
+      {
+        "id": 5,
+        "text": "You enjoy participating in group activities.",
+        "dimension": "E"
+      },
+      {
+        "id": 6,
+        "text": "You are not too interested in discussing various interpretations and analyses of creative works.",
+        "dimension": "S"
+      },
+      {
+        "id": 7,
+        "text": "You prefer practical, concrete information over abstract theories.",
+        "dimension": "S"
+      },
+      {
+        "id": 8,
+        "text": "You spend a lot of your free time exploring various random topics that pique your interest.",
+        "dimension": "N"
+      },
+      {
+        "id": 9,
+        "text": "You like books and movies that make you come up with your own interpretation of the ending.",
+        "dimension": "N"
+      },
+      {
+        "id": 10,
+        "text": "You enjoy exploring new ideas and possibilities.",
+        "dimension": "N"
+      },
+      {
+        "id": 11,
+        "text": "You usually stay calm, even under a lot of pressure.",
+        "dimension": "T"
+      },
+      {
+        "id": 12,
+        "text": "You are more inclined to follow your head than your heart.",
+        "dimension": "T"
+      },
+      {
+        "id": 13,
+        "text": "Seeing other people cry can easily make you feel like you want to cry too.",
+        "dimension": "F"
+      },
+      {
+        "id": 14,
+        "text": "You are very sentimental.",
+        "dimension": "F"
+      },
+      {
+        "id": 15,
+        "text": "Your happiness comes more from helping others accomplish things than your own accomplishments.",
+        "dimension": "F"
+      },
+      {
+        "id": 16,
+        "text": "You often make a backup plan for a backup plan.",
+        "dimension": "J"
+      },
+      {
+        "id": 17,
+        "text": "You prefer to completely finish one project before starting another.",
+        "dimension": "J"
+      },
+      {
+        "id": 18,
+        "text": "You like to use organizing tools like schedules and lists.",
+        "dimension": "J"
+      },
+      {
+        "id": 19,
+        "text": "You usually prefer just doing what you feel like at any given moment instead of planning a particular daily routine.",
+        "dimension": "P"
+      },
+      {
+        "id": 20,
+        "text": "You are interested in so many things that you find it difficult to choose what to try next.",
+        "dimension": "P"
+      },
+      {
+        "id": 21,
+        "text": "You find it easy to stay relaxed and focused even when there is some pressure.",
+        "dimension": "I"
+      },
+      {
+        "id": 22,
+        "text": "You are energized by being around other people.",
+        "dimension": "E"
+      },
+      {
+        "id": 23,
+        "text": "You prefer to have a few close friends rather than many acquaintances.",
+        "dimension": "I"
+      },
+      {
+        "id": 24,
+        "text": "You enjoy being the center of attention.",
+        "dimension": "E"
+      },
+      {
+        "id": 25,
+        "text": "You need quiet time to recharge after social activities.",
+        "dimension": "I"
+      },
+      {
+        "id": 26,
+        "text": "You focus on the here-and-now rather than possibilities for the future.",
+        "dimension": "S"
+      },
+      {
+        "id": 27,
+        "text": "You are more interested in what could be than what is.",
+        "dimension": "N"
+      },
+      {
+        "id": 28,
+        "text": "You prefer to work with established methods rather than experiment with new approaches.",
+        "dimension": "S"
+      },
+      {
+        "id": 29,
+        "text": "You often get so lost in thoughts that you ignore or forget your surroundings.",
+        "dimension": "N"
+      },
+      {
+        "id": 30,
+        "text": "You trust experience more than theory.",
+        "dimension": "S"
+      },
+      {
+        "id": 31,
+        "text": "You consider yourself more practical than creative.",
+        "dimension": "T"
+      },
+      {
+        "id": 32,
+        "text": "You find it easy to empathize with a person whose experiences are very different from yours.",
+        "dimension": "F"
+      },
+      {
+        "id": 33,
+        "text": "You think that everyone's views should be respected regardless of whether they are supported by facts or not.",
+        "dimension": "F"
+      },
+      {
+        "id": 34,
+        "text": "You feel more drawn to places with busy, bustling atmospheres than quiet, intimate places.",
+        "dimension": "T"
+      },
+      {
+        "id": 35,
+        "text": "You are more concerned with truth than with people's feelings.",
+        "dimension": "T"
+      },
+      {
+        "id": 36,
+        "text": "You prefer to improvise rather than spend time coming up with a detailed plan.",
+        "dimension": "P"
+      },
+      {
+        "id": 37,
+        "text": "You find deadlines stressful.",
+        "dimension": "P"
+      },
+      {
+        "id": 38,
+        "text": "You prefer to have everything planned out in advance.",
+        "dimension": "J"
+      },
+      {
+        "id": 39,
+        "text": "You enjoy having a clear routine in your daily life.",
+        "dimension": "J"
+      },
+      {
+        "id": 40,
+        "text": "You often leave things to the last minute.",
+        "dimension": "P"
+      },
+      {
+        "id": 41,
+        "text": "You feel comfortable being spontaneous in social situations.",
+        "dimension": "E"
+      },
+      {
+        "id": 42,
+        "text": "You prefer written communication over verbal communication.",
+        "dimension": "I"
+      },
+      {
+        "id": 43,
+        "text": "You enjoy networking events and meeting new people.",
+        "dimension": "E"
+      },
+      {
+        "id": 44,
+        "text": "You prefer to think things through before speaking.",
+        "dimension": "I"
+      },
+      {
+        "id": 45,
+        "text": "You feel energized after attending parties or social gatherings.",
+        "dimension": "E"
+      },
+      {
+        "id": 46,
+        "text": "You are more interested in the big picture than the details.",
+        "dimension": "N"
+      },
+      {
+        "id": 47,
+        "text": "You prefer concrete examples over abstract concepts.",
+        "dimension": "S"
+      },
+      {
+        "id": 48,
+        "text": "You enjoy brainstorming and generating new ideas.",
+        "dimension": "N"
+      },
+      {
+        "id": 49,
+        "text": "You focus on facts and details rather than interpretations.",
+        "dimension": "S"
+      },
+      {
+        "id": 50,
+        "text": "You are drawn to theoretical and philosophical discussions.",
+        "dimension": "N"
+      },
+      {
+        "id": 51,
+        "text": "You make decisions based on logic rather than feelings.",
+        "dimension": "T"
+      },
+      {
+        "id": 52,
+        "text": "You are sensitive to the emotions of others.",
+        "dimension": "F"
+      },
+      {
+        "id": 53,
+        "text": "You value harmony and cooperation over competition.",
+        "dimension": "F"
+      },
+      {
+        "id": 54,
+        "text": "You prefer objective analysis over personal considerations.",
+        "dimension": "T"
+      },
+      {
+        "id": 55,
+        "text": "You find it important to maintain personal relationships even when it's inconvenient.",
+        "dimension": "F"
+      },
+      {
+        "id": 56,
+        "text": "You like to keep your options open rather than commit to a plan.",
+        "dimension": "P"
+      },
+      {
+        "id": 57,
+        "text": "You prefer structure and organization in your work environment.",
+        "dimension": "J"
+      },
+      {
+        "id": 58,
+        "text": "You enjoy exploring different possibilities before making a decision.",
+        "dimension": "P"
+      },
+      {
+        "id": 59,
+        "text": "You feel satisfied when you complete tasks ahead of schedule.",
+        "dimension": "J"
+      },
+      {
+        "id": 60,
+        "text": "You adapt easily to unexpected changes in plans.",
+        "dimension": "P"
+      }
+    ],
+    "responses": {
+      "1": 4,
+      "2": 2,
+      "3": 4,
+      "4": 4,
+      "5": 3,
+      "21": 4,
+      "22": 4,
+      "23": 4,
+      "24": 3,
+      "25": 3,
+      "41": 2,
+      "42": 2,
+      "43": 2,
+      "44": 3,
+      "45": 1,
+      "6": 1,
+      "7": 3,
+      "8": 5,
+      "9": 4,
+      "10": 4,
+      "26": 4,
+      "27": 4,
+      "28": 3,
+      "29": 4,
+      "30": 5,
+      "46": 3,
+      "47": 4,
+      "48": 2,
+      "49": 4,
+      "50": 5,
+      "11": 4,
+      "12": 3,
+      "13": 3,
+      "14": 5,
+      "15": 5,
+      "31": 4,
+      "32": 3,
+      "33": 5,
+      "34": 3,
+      "35": 5,
+      "51": 2,
+      "52": 3,
+      "53": 3,
+      "54": 3,
+      "55": 1,
+      "16": 5,
+      "17": 3,
+      "18": 4,
+      "19": 4,
+      "20": 3,
+      "36": 2,
+      "37": 4,
+      "38": 5,
+      "39": 2,
+      "40": 4,
+      "56": 3,
+      "57": 3,
+      "58": 4,
+      "59": 3,
+      "60": 5
+    },
+    "demographics": {
+      "participant_number": 70,
+      "Edad": 17,
+      "Género": "Masculino",
+      "Carrera": "Música",
+      "Semestre": 4,
+      "¿Carrera fue primera opción?": "No",
+      "Seguridad en elección de carrera": 5,
+      "Factores que influyeron en la elección": "Intereses personales",
+      "Horas de estudio semanales": 6,
+      "Satisfacción con desempeño académico": 3,
+      "Nivel de motivación": 4,
+      "Buen rendimiento académico": 2,
+      "Nivel de estrés académico": 3,
+      "Manejo de carga académica": 4,
+      "Rol en trabajos grupales": "Organizador",
+      "Expresar ideas en público": 4,
+      "¿Personalidad encaja con la carrera?": 4,
+      "¿Ha considerado cambiar de carrera?": 1,
+      "Éxito percibido en la carrera": 4,
+      "Influencia personalidad en rendimiento": 5
+    },
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-06-01T00:06:28.988634",
+      "user_id": null,
+      "source_id": "participant_70"
+    }
+  },
+  "results": {
+    "mbti_type": "ENFJ",
+    "type_description": "Requires AI analysis (--llm) to populate this field",
+    "strengths": [
+      "Requires AI analysis (--llm) to populate this field"
+    ],
+    "weaknesses": [
+      "Requires AI analysis (--llm) to populate this field"
+    ],
+    "career_suggestions": [
+      "Requires AI analysis (--llm) to populate this field"
+    ],
+    "relationship_insights": "Requires AI analysis (--llm) to populate this field",
+    "confidence_scores": {
+      "EI_confidence": 0.06,
+      "SN_confidence": 0.53,
+      "TF_confidence": 0.3,
+      "JP_confidence": 0.26
+    },
+    "dimension_scores": {
+      "E_score": 0.5294117647058824,
+      "I_score": 0.47058823529411764,
+      "S_score": 0.23529411764705882,
+      "N_score": 0.7647058823529411,
+      "T_score": 0.35,
+      "F_score": 0.65,
+      "J_score": 0.631578947368421,
+      "P_score": 0.3684210526315789
+    }
+  },
+  "metadata": {
+    "exported_at": "2026-06-01T00:06:28.988917",
+    "version": "1.0",
+    "saved_at": "2026-06-01T00:06:28.988925"
+  },
+  "demographics": {
+    "participant_number": 70,
+    "Edad": 17,
+    "Género": "Masculino",
+    "Carrera": "Música",
+    "Semestre": 4,
+    "¿Carrera fue primera opción?": "No",
+    "Seguridad en elección de carrera": 5,
+    "Factores que influyeron en la elección": "Intereses personales",
+    "Horas de estudio semanales": 6,
+    "Satisfacción con desempeño académico": 3,
+    "Nivel de motivación": 4,
+    "Buen rendimiento académico": 2,
+    "Nivel de estrés académico": 3,
+    "Manejo de carga académica": 4,
+    "Rol en trabajos grupales": "Organizador",
+    "Expresar ideas en público": 4,
+    "¿Personalidad encaja con la carrera?": 4,
+    "¿Ha considerado cambiar de carrera?": 1,
+    "Éxito percibido en la carrera": 4,
+    "Influencia personalidad en rendimiento": 5
+  }
+}

@@ -1,0 +1,175 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>MBTI Report - ENFJ</title>
+        <style>
+            :root {
+                --bg-color: #ffffff;
+                --text-color: #333333;
+                --border-color: #ddd;
+                --section-bg: #f9f9f9;
+                --table-header-bg: #f0f0f0;
+            }
+            
+            [data-theme="dark"] {
+                --bg-color: #1a1a1a;
+                --text-color: #e0e0e0;
+                --border-color: #444;
+                --section-bg: #2a2a2a;
+                --table-header-bg: #333;
+            }
+            
+            body { 
+                font-family: Arial, sans-serif; 
+                margin: 40px; 
+                line-height: 1.6; 
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                transition: background-color 0.3s, color 0.3s;
+            }
+            .header { text-align: center; margin-bottom: 30px; position: relative; }
+            .theme-toggle {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .theme-toggle:hover { background: #45a049; }
+            .type-badge { background: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; }
+            .section { margin: 20px 0; }
+            .section h2 { color: var(--text-color); border-bottom: 2px solid #4CAF50; }
+            ul { padding-left: 20px; }
+            .analysis { background: var(--section-bg); padding: 15px; border-left: 4px solid #4CAF50; }
+            table { border-color: var(--border-color); }
+            th { background: var(--table-header-bg) !important; }
+            td, th { border-color: var(--border-color) !important; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+            <h1>Your Personality Type <a target="_blank" rel="noopener noreferrer" href="https://huggingface.co/spaces/Fancellu/mbti-pocketflow">mbti-pocketflow<a/></h1>
+            <div class="type-badge">ENFJ - Protagonist</div>
+            <p><em>Charismatic and inspiring leaders, able to mesmerize their listeners.</em></p>
+        </div>
+        
+        <div class="section">
+            <h2>Question Responses</h2>
+            <div class="responses">
+                <table style='width: 100%; border-collapse: collapse;'><tr style='background: #f0f0f0;'><th style='padding: 8px; border: 1px solid #ddd;'>Question</th><th style='padding: 8px; border: 1px solid #ddd;'>Dimension</th><th style='padding: 8px; border: 1px solid #ddd;'>Response</th></tr><tr id='Q1'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q1:</strong> You regularly make new friends.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q2'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q2:</strong> You feel comfortable just walking up to someone you find interesting and striking up a conversation.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q3'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q3:</strong> At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q4'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q4:</strong> You prefer to work alone rather than in a team.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q5'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q5:</strong> You enjoy participating in group activities.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q6'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q6:</strong> You are not too interested in discussing various interpretations and analyses of creative works.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Disagree</strong></td></tr><tr id='Q7'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q7:</strong> You prefer practical, concrete information over abstract theories.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q8'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q8:</strong> You spend a lot of your free time exploring various random topics that pique your interest.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q9'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q9:</strong> You like books and movies that make you come up with your own interpretation of the ending.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q10'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q10:</strong> You enjoy exploring new ideas and possibilities.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q11'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q11:</strong> You usually stay calm, even under a lot of pressure.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q12'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q12:</strong> You are more inclined to follow your head than your heart.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q13'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q13:</strong> Seeing other people cry can easily make you feel like you want to cry too.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q14'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q14:</strong> You are very sentimental.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q15'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q15:</strong> Your happiness comes more from helping others accomplish things than your own accomplishments.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q16'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q16:</strong> You often make a backup plan for a backup plan.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q17'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q17:</strong> You prefer to completely finish one project before starting another.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q18'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q18:</strong> You like to use organizing tools like schedules and lists.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q19'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q19:</strong> You usually prefer just doing what you feel like at any given moment instead of planning a particular daily routine.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q20'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q20:</strong> You are interested in so many things that you find it difficult to choose what to try next.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q21'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q21:</strong> You find it easy to stay relaxed and focused even when there is some pressure.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q22'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q22:</strong> You are energized by being around other people.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q23'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q23:</strong> You prefer to have a few close friends rather than many acquaintances.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q24'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q24:</strong> You enjoy being the center of attention.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q25'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q25:</strong> You need quiet time to recharge after social activities.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q26'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q26:</strong> You focus on the here-and-now rather than possibilities for the future.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q27'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q27:</strong> You are more interested in what could be than what is.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q28'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q28:</strong> You prefer to work with established methods rather than experiment with new approaches.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q29'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q29:</strong> You often get so lost in thoughts that you ignore or forget your surroundings.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q30'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q30:</strong> You trust experience more than theory.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q31'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q31:</strong> You consider yourself more practical than creative.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q32'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q32:</strong> You find it easy to empathize with a person whose experiences are very different from yours.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q33'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q33:</strong> You think that everyone's views should be respected regardless of whether they are supported by facts or not.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q34'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q34:</strong> You feel more drawn to places with busy, bustling atmospheres than quiet, intimate places.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q35'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q35:</strong> You are more concerned with truth than with people's feelings.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q36'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q36:</strong> You prefer to improvise rather than spend time coming up with a detailed plan.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q37'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q37:</strong> You find deadlines stressful.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q38'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q38:</strong> You prefer to have everything planned out in advance.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q39'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q39:</strong> You enjoy having a clear routine in your daily life.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q40'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q40:</strong> You often leave things to the last minute.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q41'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q41:</strong> You feel comfortable being spontaneous in social situations.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q42'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q42:</strong> You prefer written communication over verbal communication.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q43'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q43:</strong> You enjoy networking events and meeting new people.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q44'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q44:</strong> You prefer to think things through before speaking.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>I</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q45'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q45:</strong> You feel energized after attending parties or social gatherings.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>E</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Disagree</strong></td></tr><tr id='Q46'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q46:</strong> You are more interested in the big picture than the details.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q47'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q47:</strong> You prefer concrete examples over abstract concepts.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q48'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q48:</strong> You enjoy brainstorming and generating new ideas.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q49'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q49:</strong> You focus on facts and details rather than interpretations.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>S</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q50'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q50:</strong> You are drawn to theoretical and philosophical discussions.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>N</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr><tr id='Q51'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q51:</strong> You make decisions based on logic rather than feelings.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Disagree</strong></td></tr><tr id='Q52'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q52:</strong> You are sensitive to the emotions of others.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q53'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q53:</strong> You value harmony and cooperation over competition.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q54'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q54:</strong> You prefer objective analysis over personal considerations.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>T</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q55'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q55:</strong> You find it important to maintain personal relationships even when it's inconvenient.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>F</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Disagree</strong></td></tr><tr id='Q56'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q56:</strong> You like to keep your options open rather than commit to a plan.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q57'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q57:</strong> You prefer structure and organization in your work environment.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q58'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q58:</strong> You enjoy exploring different possibilities before making a decision.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Agree</strong></td></tr><tr id='Q59'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q59:</strong> You feel satisfied when you complete tasks ahead of schedule.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>J</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Neutral</strong></td></tr><tr id='Q60'><td style='padding: 8px; border: 1px solid #ddd;'><strong>Q60:</strong> You adapt easily to unexpected changes in plans.</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>P</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'><strong>Strongly Agree</strong></td></tr></table>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Strengths</h2>
+            <ul>
+                <li>Tolerant</li><li>Reliable</li><li>Charismatic</li><li>Altruistic</li><li>Natural leaders</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Areas for Growth</h2>
+            <ul>
+                <li>Overly idealistic</li><li>Too selfless</li><li>Too sensitive</li><li>Fluctuating self-esteem</li><li>Struggle to make tough decisions</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Career Suggestions</h2>
+            <ul>
+                <li>Teacher</li><li>Coach</li><li>Politician</li><li>Sales Manager</li><li>Event Coordinator</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Analysis Details</h2>
+            <div class="analysis">
+                <h3>Traditional MBTI Dimensions</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+                    
+                    <div style="flex: 1; min-width: 150px; background: #e8f5e9; padding: 10px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>Extraversion / Introversion</strong><br>
+                        E 
+                        (52.9%)
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #e8f5e9; padding: 10px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>Sensing / Intuition</strong><br>
+                        N
+                        (76.5%)
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #e8f5e9; padding: 10px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>Thinking / Feeling</strong><br>
+                        F
+                        (65.0%)
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #e8f5e9; padding: 10px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>Judging / Perceiving</strong><br>
+                        J
+                        (63.2%)
+                    </div>
+                    
+                </div>
+
+                <h3>Confidence Scores</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+                    
+                    <div style="flex: 1; min-width: 150px; background: #fff3e0; padding: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <strong>E-I Confidence</strong>: 0.06
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #fff3e0; padding: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <strong>S-N Confidence</strong>: 0.53
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #fff3e0; padding: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <strong>T-F Confidence</strong>: 0.30
+                    </div>
+                    <div style="flex: 1; min-width: 150px; background: #fff3e0; padding: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <strong>J-P Confidence</strong>: 0.26
+                    </div>
+                    
+                </div>
+                
+                <h3>AI Insights</h3>
+                <div class="analysis-content">
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <p><small>Report generated on 2026-06-01 00:06:28</small></p>
+        </div>
+        
+        <script>
+            function toggleTheme() {
+                const body = document.body;
+                const button = document.querySelector('.theme-toggle');
+                
+                if (body.getAttribute('data-theme') === 'dark') {
+                    body.removeAttribute('data-theme');
+                    button.textContent = '🌙 Dark';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    body.setAttribute('data-theme', 'dark');
+                    button.textContent = '☀️ Light';
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+            
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️ Light';
+            }
+        </script>
+    </body>
+    </html>
+    
