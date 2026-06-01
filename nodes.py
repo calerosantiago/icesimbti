@@ -28,7 +28,7 @@ class LoadQuestionnaireNode(Node):
     def exec(self, inputs):
         import_file, lang, length = inputs
         if not import_file or not os.path.exists(import_file):
-            return load_questionnaire(lang=lang, length=length), {}
+            return load_questionnaire(lang=lang, length=length), {}, {}, None
             
         with open(import_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -41,15 +41,24 @@ class LoadQuestionnaireNode(Node):
             questions = data.get('questions', load_questionnaire(lang=lang, length=length))
             responses = data.get('responses', {})
             
+        # Preserve demographics if present (pass through without processing)
+        demographics = data.get('demographics', {})
+        
+        # Derive unique source id from filename
+        source_id = os.path.splitext(os.path.basename(import_file))[0]
+            
         # Convert string keys to int keys for responses
         responses = {int(k): v for k, v in responses.items()}
-        return questions, responses
+        return questions, responses, demographics, source_id
     
     def post(self, shared, prep_res, exec_res):
-        questions, responses = exec_res
+        questions, responses, demographics, source_id = exec_res
         shared["questionnaire"]["questions"] = questions
         shared["questionnaire"]["responses"] = responses
         shared["questionnaire"]["metadata"]["created_at"] = datetime.now().isoformat()
+        shared["questionnaire"]["metadata"]["source_id"] = source_id
+        if demographics:
+            shared["questionnaire"]["demographics"] = demographics
         return "default"
 
 class PresentQuestionsNode(Node):
@@ -314,12 +323,13 @@ class GenerateReportNode(Node):
         return (
             shared["results"]["mbti_type"],
             shared["analysis"],
-            shared["config"]["output_format"]
+            shared["config"]["output_format"],
+            shared["questionnaire"].get("metadata", {}).get("source_id", "")
         )
     
     def exec(self, inputs):
-        mbti_type, analysis, output_format = inputs
-        return generate_report(mbti_type, analysis, output_format)
+        mbti_type, analysis, output_format, source_id = inputs
+        return generate_report(mbti_type, analysis, output_format, source_id)
     
     def post(self, shared, prep_res, exec_res):
         shared["exports"]["report_path"] = exec_res
@@ -342,10 +352,16 @@ class ExportDataNode(Node):
             }
         }
         
-        # Generate filename
+        # Include demographics data if present (pass through without processing)
+        demographics = questionnaire.get("demographics", {})
+        if demographics:
+            export_data["demographics"] = demographics
+        
+        # Generate unique filename using source_id
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         mbti_type = results.get("mbti_type", "UNKNOWN")
-        filename = f"mbti_questionnaire_{mbti_type}_{timestamp}.json"
+        source_id = questionnaire.get("metadata", {}).get("source_id", mbti_type)
+        filename = f"mbti_questionnaire_{mbti_type}_{source_id}_{timestamp}.json"
         
         return export_data, filename
     

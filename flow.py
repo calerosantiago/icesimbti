@@ -64,6 +64,7 @@ def create_shared_store(config=None):
         "questionnaire": {
             "questions": [],
             "responses": {},
+            "demographics": {},
             "metadata": {
                 "version": "1.0",
                 "created_at": None,

@@ -10,70 +10,69 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from flow import create_mbti_flow, create_shared_store
 from utils.test_data import generate_test_data
 
-def run_pocketflow_questionnaire(import_file=None, use_llm=False, is_test=False, lang="en", length=20):
+def run_pocketflow_questionnaire(import_files=None, use_llm=False, is_test=False, lang="en", length=20):
     """Run questionnaire using PocketFlow"""
     print("=== MBTI Questionnaire (PocketFlow) ===\n")
+    
+    if not import_files:
+        import_files = [None]
     
     # Map 'latam' to 'es' internally
     internal_lang = "es" if lang == "latam" else "en"
     
-    # Create flow and shared store
-    flow = create_mbti_flow(use_llm=use_llm)
-    config = {
-        "ui_mode": "test" if is_test else "cli",
-        "output_format": "html",
-        "analysis_method": "both" if use_llm else "traditional",
-        "import_file": import_file,
-        "language": internal_lang,
-        "questionnaire_length": length
-    }
-    shared = create_shared_store(config)
-    
-    try:
+    for import_file in import_files:
         if import_file:
-            print(f"Importing data from {import_file}...")
+            print(f"Processing: {import_file}")
         
-        if use_llm:
-            print("Running PocketFlow pipeline with AI analysis...")
-        else:
-            print("Running PocketFlow pipeline (Traditional MBTI only)...")
+        # Create flow and shared store per file
+        flow = create_mbti_flow(use_llm=use_llm)
+        config = {
+            "ui_mode": "test" if is_test else "cli",
+            "output_format": "html",
+            "import_file": import_file,
+            "language": internal_lang,
+            "questionnaire_length": length
+        }
+        shared = create_shared_store(config)
+        
+        try:
+            if use_llm:
+                print("Running PocketFlow pipeline with AI analysis...")
+            else:
+                print("Running PocketFlow pipeline (Traditional MBTI only)...")
+                
+            flow.run(shared)
             
-        flow.run(shared)
-        
-        # Display results
-        print("\n" + "="*50)
-        print("POCKETFLOW RESULTS")
-        print("="*50)
-        print(f"Your MBTI Type: {shared['results']['mbti_type']}")
-        print(f"Report generated: {shared['exports']['report_path']}")
-        print(f"Data exported: {shared['exports']['questionnaire_json']}")
-        
-        # Show confidence scores
-        confidence = shared['analysis']['confidence_scores']
-        if confidence:
-            print(f"\nConfidence Scores:")
-            for dimension, score in confidence.items():
-                print(f"  {dimension}: {score:.2f}")
-        
-        # Show traditional scores
-        traditional = shared['analysis']['traditional_scores']
-        if traditional:
-            print(f"\nDimension Scores:")
-            pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
-            for dim1, dim2 in pairs:
-                score1 = traditional.get(f'{dim1}_score', 0.5)
-                score2 = traditional.get(f'{dim2}_score', 0.5)
-                stronger = dim1 if score1 > score2 else dim2
-                percentage = max(score1, score2) * 100
-                print(f"  {dim1}/{dim2}: {stronger} ({percentage:.1f}%)")
-        
-        print(f"\nOpen '{shared['exports']['report_path']}' to view the full report.")
-        
-    except Exception as e:
-        print(f"Error running PocketFlow: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+            # Display results
+            print("\n" + "="*50)
+            print("POCKETFLOW RESULTS")
+            print("="*50)
+            print(f"MBTI Type: {shared['results']['mbti_type']}")
+            print(f"Report: {shared['exports']['report_path']}")
+            print(f"Export: {shared['exports']['questionnaire_json']}")
+            
+            # Show traditional scores
+            traditional = shared['analysis']['traditional_scores']
+            if traditional:
+                print(f"\nDimension Scores:")
+                pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
+                for dim1, dim2 in pairs:
+                    score1 = traditional.get(f'{dim1}_score', 0.5)
+                    score2 = traditional.get(f'{dim2}_score', 0.5)
+                    stronger = dim1 if score1 > score2 else dim2
+                    percentage = max(score1, score2) * 100
+                    print(f"  {dim1}/{dim2}: {stronger} ({percentage:.1f}%)")
+            
+            if import_file and shared["questionnaire"].get("demographics"):
+                print(f"\nDemographics included in export.")
+            
+            print()
+            
+        except Exception as e:
+            print(f"Error processing {import_file}: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
     
     return True
 
@@ -152,7 +151,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MBTI Questionnaire using PocketFlow')
     parser.add_argument('--test', action='store_true', help='Run in test mode (simulated data or test UI)')
     parser.add_argument('--test-type', type=str, help='MBTI type for simulated test data (e.g., INTJ)')
-    parser.add_argument('--import-file', type=str, help='Import questionnaire from JSON')
+    parser.add_argument('--import-file', type=str, nargs='*', help='Import questionnaire(s) from JSON file(s)')
     parser.add_argument('--llm', action='store_true', help='Enable AI-powered analysis (requires Gemini API Key)')
     parser.add_argument('--lang', type=str, default='en', choices=['en', 'latam'], help='Set language: en (default) or latam')
     parser.add_argument('--length', type=int, default=20, choices=[20, 40, 60], help='Number of questions (20, 40, 60)')

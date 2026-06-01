@@ -158,7 +158,7 @@ def generate_responses_html(responses_data):
     html += "</table>"
     return html
 
-def generate_report(mbti_type, analysis, format="html"):
+def generate_report(mbti_type, analysis, format="html", source_id=""):
     """Generate MBTI report in HTML or PDF format"""
     
     # Get type info
@@ -349,7 +349,8 @@ def generate_report(mbti_type, analysis, format="html"):
     
     # Save report to local reports directory
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"mbti_report_{mbti_type}_{timestamp}.html"
+    source_part = f"_{source_id}" if source_id else ""
+    filename = f"mbti_report_{mbti_type}{source_part}_{timestamp}.html"
     
     # Create reports directory in project root if it doesn't exist
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

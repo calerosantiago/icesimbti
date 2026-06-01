@@ -11,19 +11,21 @@ from io import BytesIO
 from pathlib import Path
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Any
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
+
+from utils.mbti_scoring import traditional_mbti_score, determine_mbti_type
 
 
 class MBTISimpleReportGenerator:
     """Generate simple, clean MBTI research report with embedded charts."""
 
-    reports_dir = "./reports"
+    reports_dir = "./input"
     conclusions_dir = "./conclusions"
 
-    def __init__(self, reports_dir: str = "./reports", conclusions_dir: str = "./conclusions"):
+    def __init__(self, reports_dir: str = "./input", conclusions_dir: str = "./conclusions"):
         self.reports_dir = Path(reports_dir)
         self.conclusions_dir = Path(conclusions_dir)
         self.conclusions_dir.mkdir(exist_ok=True)
@@ -31,8 +33,8 @@ class MBTISimpleReportGenerator:
         self.mbti_counts = defaultdict(int)
 
     def extract_mbti_reports(self):
-        """Extract data from all MBTI JSON reports."""
-        json_files = sorted(self.reports_dir.glob("mbti_questionnaire_*.json"))
+        """Extract data from all MBTI JSON files."""
+        json_files = sorted(self.reports_dir.glob("*.json"))
 
         for json_file in json_files:
             try:
@@ -40,22 +42,139 @@ class MBTISimpleReportGenerator:
                     data = json.load(f)
 
                 mbti_type = data.get("results", {}).get("mbti_type")
+                responses = data.get("questionnaire", {}).get("responses", {})
+
+                if not mbti_type and responses:
+                    scores = traditional_mbti_score(responses)
+                    mbti_type = determine_mbti_type(scores)
+
                 if not mbti_type:
                     continue
 
                 filename = json_file.stem
                 parts = filename.split("_")
-                participant_num = parts[2] if len(parts) > 2 else "unknown"
 
-                self.participants.append({
-                    "number": participant_num,
-                    "mbti": mbti_type,
-                })
+                participant_info = {"mbti": mbti_type}
+                if filename.startswith("participant") and len(parts) > 1:
+                    participant_info["number"] = parts[1]
+                elif len(parts) > 2:
+                    participant_info["number"] = parts[2]
+                else:
+                    participant_info["number"] = "unknown"
+
+                demographics = data.get("demographics", {})
+                if demographics:
+                    participant_info["demographics"] = demographics
+                    if "participant_number" in demographics:
+                        participant_info["number"] = str(demographics["participant_number"])
+
+                self.participants.append(participant_info)
                 self.mbti_counts[mbti_type] += 1
             except:
                 pass
 
         print(f"Extracted data from {len(self.participants)} participants")
+
+    def _demographic_stats(self) -> Dict:
+        """Compute aggregate demographic statistics from participant data."""
+        genders = defaultdict(int)
+        semesters = defaultdict(int)
+        ages = []
+        careers = defaultdict(int)
+        first_choice = {"Si": 0, "No": 0}
+        satisfaction_scores = defaultdict(list)
+        study_hours = []
+
+        for p in self.participants:
+            d = p.get("demographics", {})
+            if not d:
+                continue
+
+            genero = str(d.get("G\u00e9nero", "")).strip().lower()
+            if genero in ("masculino", "male", "m"):
+                genders["Male"] += 1
+            elif genero in ("femenino", "female", "f"):
+                genders["Female"] += 1
+            else:
+                genders[genero.capitalize() if genero else "Unknown"] += 1
+
+            sem = d.get("Semestre")
+            if sem is not None:
+                semesters[f"{sem}th Semester"] += 1
+
+            edad = d.get("Edad")
+            if edad is not None:
+                try:
+                    ages.append(int(edad))
+                except:
+                    pass
+
+            carrera = d.get("Carrera", "")
+            if carrera:
+                careers[carrera] += 1
+
+            first = d.get("\u00bfCarrera fue primera opci\u00f3n?", "")
+            if first:
+                key = "Si" if str(first).strip().lower() in ("si", "s\u00ed", "yes", "y") else "No"
+                first_choice[key] += 1
+
+            for field, key in [
+                ("Seguridad en elecci\u00f3n de carrera", "career_security"),
+                ("\u00bfPersonalidad encaja con la carrera?", "personality_fit"),
+                ("\u00c9xito percibido en la carrera", "perceived_success"),
+                ("Satisfacci\u00f3n con desempe\u00f1o acad\u00e9mico", "academic_satisfaction"),
+                ("Nivel de motivaci\u00f3n", "motivation"),
+                ("Buen rendimiento acad\u00e9mico", "academic_performance"),
+                ("Nivel de estr\u00e9s acad\u00e9mico", "stress"),
+                ("Manejo de carga acad\u00e9mica", "workload_management"),
+                ("Expresar ideas en p\u00fablico", "public_speaking"),
+                ("Influencia personalidad en rendimiento", "personality_influence"),
+            ]:
+                val = d.get(field)
+                if val is not None:
+                    try:
+                        satisfaction_scores[key].append(int(val))
+                    except:
+                        pass
+
+            horas = d.get("Horas de estudio semanales")
+            if horas is not None:
+                try:
+                    study_hours.append(int(horas))
+                except:
+                    pass
+
+        result = {
+            "genders": dict(genders),
+            "semesters": dict(sorted(semesters.items())),
+            "careers": dict(careers),
+            "first_choice": dict(first_choice),
+            "total_with_demographics": len([p for p in self.participants if p.get("demographics")]),
+        }
+
+        if ages:
+            result["avg_age"] = sum(ages) / len(ages)
+            result["min_age"] = min(ages)
+            result["max_age"] = max(ages)
+        else:
+            result["avg_age"] = None
+
+        for key, vals in satisfaction_scores.items():
+            if vals:
+                result[f"avg_{key}"] = sum(vals) / len(vals)
+                result[f"min_{key}"] = min(vals)
+                result[f"max_{key}"] = max(vals)
+                if len(vals) > 1:
+                    result[f"std_{key}"] = (sum((v - sum(vals)/len(vals))**2 for v in vals) / len(vals)) ** 0.5
+                else:
+                    result[f"std_{key}"] = 0.0
+
+        if study_hours:
+            result["avg_study_hours"] = sum(study_hours) / len(study_hours)
+            result["min_study_hours"] = min(study_hours)
+            result["max_study_hours"] = max(study_hours)
+
+        return result
 
     def calculate_statistics(self) -> Dict:
         """Calculate statistical summaries."""
@@ -73,6 +192,8 @@ class MBTISimpleReportGenerator:
         judging = sum(1 for p in self.participants if len(p["mbti"]) > 3 and p["mbti"][3] == "J")
         perceiving = sum(1 for p in self.participants if len(p["mbti"]) > 3 and p["mbti"][3] == "P")
 
+        demo = self._demographic_stats()
+
         return {
             "total": total,
             "extraversion": extraversion,
@@ -83,6 +204,7 @@ class MBTISimpleReportGenerator:
             "thinking": thinking,
             "judging": judging,
             "perceiving": perceiving,
+            "demographics": demo,
         }
 
     def _fig_to_b64(self, fig) -> str:
@@ -97,6 +219,7 @@ class MBTISimpleReportGenerator:
         """Create chart images and return as base64 strings."""
         print("Generating chart images...")
         charts = {}
+        total = stats["total"]
 
         # Chart 1: MBTI Distribution
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -107,11 +230,11 @@ class MBTISimpleReportGenerator:
         ax.bar(types, values, color='steelblue', edgecolor='black', linewidth=1.5)
         ax.set_ylabel('Frequency', fontsize=11, fontweight='bold')
         ax.set_xlabel('MBTI Type', fontsize=11, fontweight='bold')
-        ax.set_title('MBTI Type Distribution (n=70)', fontsize=13, fontweight='bold')
+        ax.set_title(f'MBTI Type Distribution (n={total})', fontsize=13, fontweight='bold')
         ax.grid(axis='y', alpha=0.3, linestyle='--')
 
         for i, v in enumerate(values):
-            pct = (v / stats["total"]) * 100
+            pct = (v / total) * 100
             ax.text(i, v + 0.5, f'{v}\n({pct:.1f}%)', ha='center', fontsize=9)
 
         fig.tight_layout()
@@ -128,7 +251,7 @@ class MBTISimpleReportGenerator:
         ax.set_xlabel('Count', fontsize=10, fontweight='bold')
         ax.set_title('Extraversion vs Introversion', fontsize=11, fontweight='bold')
         for i, v in enumerate(values):
-            pct = (v / stats["total"]) * 100
+            pct = (v / total) * 100
             ax.text(v + 0.5, i, f'{v} ({pct:.1f}%)', va='center', fontsize=9)
 
         # N/S
@@ -139,7 +262,7 @@ class MBTISimpleReportGenerator:
         ax.set_xlabel('Count', fontsize=10, fontweight='bold')
         ax.set_title('Intuition vs Sensing', fontsize=11, fontweight='bold')
         for i, v in enumerate(values):
-            pct = (v / stats["total"]) * 100
+            pct = (v / total) * 100
             ax.text(v + 0.5, i, f'{v} ({pct:.1f}%)', va='center', fontsize=9)
 
         # F/T
@@ -150,7 +273,7 @@ class MBTISimpleReportGenerator:
         ax.set_xlabel('Count', fontsize=10, fontweight='bold')
         ax.set_title('Feeling vs Thinking', fontsize=11, fontweight='bold')
         for i, v in enumerate(values):
-            pct = (v / stats["total"]) * 100
+            pct = (v / total) * 100
             ax.text(v + 0.5, i, f'{v} ({pct:.1f}%)', va='center', fontsize=9)
 
         # J/P
@@ -161,40 +284,49 @@ class MBTISimpleReportGenerator:
         ax.set_xlabel('Count', fontsize=10, fontweight='bold')
         ax.set_title('Judging vs Perceiving', fontsize=11, fontweight='bold')
         for i, v in enumerate(values):
-            pct = (v / stats["total"]) * 100
+            pct = (v / total) * 100
             ax.text(v + 0.5, i, f'{v} ({pct:.1f}%)', va='center', fontsize=9)
 
         fig.suptitle('MBTI Dimensional Analysis', fontsize=14, fontweight='bold', y=0.995)
         fig.tight_layout()
         charts['dimensions'] = self._fig_to_b64(fig)
 
-        # Chart 3: Demographics
-        fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+        # Chart 3: Demographics (only if we have demographic data)
+        demo = stats.get("demographics", {})
+        genders = demo.get("genders", {})
+        semesters = demo.get("semesters", {})
 
-        # Gender
-        ax = axes[0]
-        labels = ['Male', 'Female']
-        values = [42, 28]
-        colors = ['#2196F3', '#FF69B4']
-        ax.pie(values, labels=labels, autopct='%1.1f%%',
-               colors=colors, startangle=90, textprops={'fontsize': 10, 'weight': 'bold'})
-        ax.set_title('Gender Distribution', fontsize=11, fontweight='bold')
+        if genders or semesters:
+            fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
-        # Semester
-        ax = axes[1]
-        labels = ['2nd Semester', '3rd Semester', '4th Semester']
-        values = [28, 24, 18]
-        colors = ['#4CAF50', '#2196F3', '#FF9800']
-        ax.bar(labels, values, color=colors, edgecolor='black', linewidth=1.5)
-        ax.set_ylabel('Count', fontsize=10, fontweight='bold')
-        ax.set_title('Semester Distribution', fontsize=11, fontweight='bold')
-        for i, v in enumerate(values):
-            pct = (v / 70) * 100
-            ax.text(i, v + 0.5, f'{v}\n({pct:.1f}%)', ha='center', fontsize=9)
+            # Gender
+            ax = axes[0]
+            gen_labels = list(genders.keys())
+            gen_values = list(genders.values())
+            colors = ['#2196F3', '#FF69B4', '#9E9E9E']
+            ax.pie(gen_values, labels=gen_labels, autopct='%1.1f%%',
+                   colors=colors[:len(gen_labels)], startangle=90,
+                   textprops={'fontsize': 10, 'weight': 'bold'})
+            ax.set_title('Gender Distribution', fontsize=11, fontweight='bold')
 
-        fig.suptitle('Demographic Distribution', fontsize=14, fontweight='bold')
-        fig.tight_layout()
-        charts['demographics'] = self._fig_to_b64(fig)
+            # Semester
+            ax = axes[1]
+            sem_labels = list(semesters.keys())
+            sem_values = list(semesters.values())
+            sem_colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336']
+            ax.bar(sem_labels, sem_values, color=sem_colors[:len(sem_labels)],
+                   edgecolor='black', linewidth=1.5)
+            ax.set_ylabel('Count', fontsize=10, fontweight='bold')
+            ax.set_title('Semester Distribution', fontsize=11, fontweight='bold')
+            for i, v in enumerate(sem_values):
+                pct = (v / total) * 100
+                ax.text(i, v + 0.5, f'{v}\n({pct:.1f}%)', ha='center', fontsize=9)
+
+            fig.suptitle('Demographic Distribution', fontsize=14, fontweight='bold')
+            fig.tight_layout()
+            charts['demographics'] = self._fig_to_b64(fig)
+        else:
+            charts['demographics'] = ""
 
         print("Charts generated successfully")
         return charts
@@ -218,7 +350,51 @@ class MBTISimpleReportGenerator:
 
         dist_img = f"data:image/png;base64,{charts['distribution']}"
         dim_img = f"data:image/png;base64,{charts['dimensions']}"
-        demo_img = f"data:image/png;base64,{charts['demographics']}"
+        demo_img = f"data:image/png;base64,{charts['demographics']}" if charts.get('demographics') else ""
+
+        demo = stats.get("demographics", {})
+
+        genders = demo.get("genders", {})
+        semesters = demo.get("semesters", {})
+        careers = demo.get("careers", {})
+
+        male_count = genders.get("Male", 0)
+        female_count = genders.get("Female", 0)
+        total_demo = male_count + female_count
+        male_pct = (male_count / total * 100) if total else 0
+        female_pct = (female_count / total * 100) if total else 0
+
+        avg_age = demo.get("avg_age")
+        min_age = demo.get("min_age")
+        max_age = demo.get("max_age")
+        avg_age_str = f"{avg_age:.1f}" if avg_age is not None else "N/A"
+        age_range_str = f"{min_age}-{max_age}" if (min_age is not None and max_age is not None) else "N/A"
+
+        first_choice = demo.get("first_choice", {})
+
+        avg_career_security = demo.get("avg_career_security")
+        avg_personality_fit = demo.get("avg_personality_fit")
+        avg_perceived_success = demo.get("avg_perceived_success")
+        avg_study_hours = demo.get("avg_study_hours")
+        min_study = demo.get("min_study_hours")
+        max_study = demo.get("max_study_hours")
+
+        avg_cs_str = f"{avg_career_security:.1f}" if avg_career_security is not None else "N/A"
+        avg_pf_str = f"{avg_personality_fit:.1f}" if avg_personality_fit is not None else "N/A"
+        avg_ps_str = f"{avg_perceived_success:.1f}" if avg_perceived_success is not None else "N/A"
+        avg_sh_str = f"{avg_study_hours:.1f}" if avg_study_hours is not None else "N/A"
+        min_sh_str = str(min_study) if min_study is not None else "N/A"
+        max_sh_str = str(max_study) if max_study is not None else "N/A"
+
+        std_cs = demo.get("std_career_security")
+        std_pf = demo.get("std_personality_fit")
+        std_ps = demo.get("std_perceived_success")
+        std_sh = demo.get("std_study_hours")
+
+        std_cs_str = f"{std_cs:.1f}" if std_cs is not None else "N/A"
+        std_pf_str = f"{std_pf:.1f}" if std_pf is not None else "N/A"
+        std_ps_str = f"{std_ps:.1f}" if std_ps is not None else "N/A"
+        std_sh_str = f"{std_sh:.1f}" if std_sh is not None else "N/A"
 
         html = '''<!DOCTYPE html>
 <html lang="es">
@@ -382,12 +558,12 @@ class MBTISimpleReportGenerator:
 
 <div class="stat-box">
 <div class="stat-label">Average Age</div>
-<div class="stat-value">20.4 Years</div>
+<div class="stat-value">''' + avg_age_str + ''' Years</div>
 </div>
 
 <div class="stat-box">
 <div class="stat-label">Age Range</div>
-<div class="stat-value">19-24 Years</div>
+<div class="stat-value">''' + age_range_str + ''' Years</div>
 </div>
 
 <div class="stat-box">
@@ -501,11 +677,16 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 </div>
 
 <h3>3. Demographic Data</h3>
+'''
 
+        if demo_img:
+            html += '''
 <div class="chart-container">
 <img src="''' + demo_img + '''" alt="Demographic Distribution">
 </div>
+'''
 
+        html += '''
 <table>
 <thead>
 <tr>
@@ -519,29 +700,13 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 <tr>
 <td rowspan="2">Gender</td>
 <td>Male</td>
-<td>42</td>
-<td>60.0%</td>
+<td>''' + str(male_count) + '''</td>
+<td>''' + f'{male_pct:.1f}%' + '''</td>
 </tr>
 <tr>
 <td>Female</td>
-<td>28</td>
-<td>40.0%</td>
-</tr>
-<tr>
-<td rowspan="3">Current Semester</td>
-<td>2nd Semester</td>
-<td>28</td>
-<td>40.0%</td>
-</tr>
-<tr>
-<td>3rd Semester</td>
-<td>24</td>
-<td>34.3%</td>
-</tr>
-<tr>
-<td>4th Semester</td>
-<td>18</td>
-<td>25.7%</td>
+<td>''' + str(female_count) + '''</td>
+<td>''' + f'{female_pct:.1f}%' + '''</td>
 </tr>
 </tbody>
 </table>
@@ -561,31 +726,31 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 <tbody>
 <tr>
 <td>Career Choice Security</td>
-<td>4.2</td>
-<td>0.8</td>
+<td>''' + avg_cs_str + '''</td>
+<td>''' + std_cs_str + '''</td>
 <td>1</td>
 <td>5</td>
 </tr>
 <tr>
 <td>Personality-Career Fit</td>
-<td>3.5</td>
-<td>1.2</td>
+<td>''' + avg_pf_str + '''</td>
+<td>''' + std_pf_str + '''</td>
 <td>1</td>
 <td>5</td>
 </tr>
 <tr>
 <td>Perceived Career Success</td>
-<td>3.6</td>
-<td>1.1</td>
+<td>''' + avg_ps_str + '''</td>
+<td>''' + std_ps_str + '''</td>
 <td>1</td>
 <td>5</td>
 </tr>
 <tr>
 <td>Weekly Study Hours</td>
-<td>5.4</td>
-<td>3.2</td>
-<td>2</td>
-<td>20</td>
+<td>''' + avg_sh_str + '''</td>
+<td>''' + std_sh_str + '''</td>
+<td>''' + min_sh_str + '''</td>
+<td>''' + max_sh_str + '''</td>
 </tr>
 </tbody>
 </table>
@@ -684,7 +849,9 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
         stats = self.calculate_statistics()
 
         print(f"Calculated statistics: {len(self.mbti_counts)} MBTI types")
-        print(f"ENFJ: {self.mbti_counts['ENFJ']} ({(self.mbti_counts['ENFJ']/stats['total']*100):.1f}%)\n")
+        for mbti_type, count in sorted(self.mbti_counts.items(), key=lambda x: x[1], reverse=True)[:5]:
+            print(f"  {mbti_type}: {count} ({(count/stats['total']*100):.1f}%)")
+        print()
 
         charts = self.create_chart_images(stats)
         self.generate_html(stats, charts, output_path)
@@ -694,7 +861,7 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 
 def main():
     """Main execution."""
-    generator = MBTISimpleReportGenerator(reports_dir="./reports", conclusions_dir="./conclusions")
+    generator = MBTISimpleReportGenerator(reports_dir="./input", conclusions_dir="./conclusions")
     generator.generate_report(output_path="./conclusions/report.html")
 
 
