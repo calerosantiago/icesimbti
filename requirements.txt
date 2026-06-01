@@ -1,0 +1,7 @@
+google-genai>=1.25.0
+pydantic>=2.0.0
+markdown~=3.8.2
+beautifulsoup4
+pocketflow
+fastmcp
+gradio>=5.38.2
