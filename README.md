@@ -1,190 +1,234 @@
-# MBTI Personality Questionnaire
+# Influencia del Tipo de Personalidad (MBTI) en la Elección de Carrera y Rendimiento Académico
+### Universidad Icesi · Curso de Estadística
 
-A PocketFlow-based application for conducting Myers-Briggs Type Indicator (MBTI) personality assessments with both traditional scoring and AI analysis.
+Aplicación para la recolección, procesamiento y análisis estadístico de perfiles de personalidad MBTI en estudiantes universitarios. Genera un reporte HTML académico con estadística descriptiva, tablas de contingencia y probabilidad condicional empírica P(Facultad | Tipo MBTI).
 
-## Features
+---
 
-- **20/40/60-question MBTI questionnaire** with selectable length for accuracy
-- **Traditional scoring algorithm** for baseline personality type determination
-- **AI-powered analysis** using LLM for detailed personality insights with question references
-- **Interactive Gradio web interface** with auto-save and progress tracking
-- **HTML report generation** with clickable question references and comprehensive analysis
-- **Data export/import** for saving and resuming questionnaires
-- **CLI and test modes** for different use cases
-- **🆕 MCP Server** for LLMs to take MBTI tests themselves via Model Context Protocol
+## Pregunta de Investigación
 
-## Project Structure
+> ¿En qué medida el tipo de personalidad (MBTI) se relaciona con la elección de carrera y el rendimiento académico en los estudiantes de la Universidad Icesi?
+
+---
+
+## Estructura del Proyecto
 
 ```
-
+icesimbti/
+├── app.py                    # Interfaz web Gradio (cuestionario interactivo)
+├── server.py                 # Servidor FastMCP para que LLMs tomen el test
+├── pf_cli.py                 # CLI con arquitectura PocketFlow
+├── flow.py                   # Definición del pipeline PocketFlow
+├── nodes.py                  # Nodos PocketFlow (carga, análisis, exportación)
+├── generate_conclusion.py    # enerador del reporte de investigación Icesi
+├── exel_to_json.py           # Conversión de datos Excel → JSON
+├── questions.txt             # Banco de preguntas MBTI
+├── requirements.txt          # Dependencias Python
+├── reports/                  # JSONs individuales por participante (input)
+├── conclusions/              # Reporte HTML generado (output)
+│   └── reporte_mbti_icesi.html
+├── docs/
+│   └── Propuesta del proyecto(Estadistica) semana 16.docx
 ├── utils/
-│   ├── call_llm.py          # LLM integration (Gemini)
-│   ├── questionnaire.py     # Question sets (20/40/60) and loading/saving
-│   ├── mbti_scoring.py      # Traditional MBTI scoring
-│   ├── report_generator.py  # HTML report generation with markdown support
-│   └── test_data.py         # Test data generation
-├── nodes.py                 # PocketFlow nodes (LoadQuestionnaire, LLMAnalysis, etc.)
-├── flow.py                  # PocketFlow flow definition
-├── app.py                   # **Main Gradio web interface with LLM**
-├── pf_cli.py                # PocketFlow CLI interface
-├── README.md                # Main README
-├── server.py                # FastMCP server for LLMs to take MBTI tests
-├── MCP_README.md            # MCP README
-├── Dockerfile               # Dockerfile for MCP server deployment
-└── requirements.txt         # Dependencies
-
+│   ├── mbti_scoring.py       # Algoritmo de puntuación MBTI tradicional
+│   ├── questionnaire.py      # Sets de preguntas (20/40/60) y serialización
+│   ├── call_llm.py           # Integración LLM (Gemini)
+│   ├── report_generator.py   # Generación de reportes HTML individuales
+│   └── test_data.py          # Datos de prueba por tipo MBTI
+└── input_reference.json      # JSON de referencia / ejemplo de estructura
 ```
 
-## Quick Start
+---
 
-### 1. Web Interface (Recommended)
+## Flujo de Datos
+
+```
+Participante
+     │
+     ▼
+app.py / pf_cli.py          ← cuestionario MBTI (60 preguntas)
+     │
+     ▼
+reports/                    ← JSON por participante
+mbti_questionnaire_<TIPO>_participant_<N>_<TIMESTAMP>.json
+     │
+     ▼
+generate_conclusion.py      ← lee todos los JSONs de reports/
+     │
+     ▼
+conclusions/
+reporte_mbti_icesi.html     ← reporte académico completo
+```
+
+---
+
+## Reporte de Investigación (`generate_conclusion.py`)
+
+Script principal del proyecto estadístico. Lee los JSONs de `./reports` y genera un reporte HTML académico alineado con los objetivos del curso.
+
+### Ejecutar
 
 ```bash
-# Install dependencies
+python generate_conclusion.py
+# Salida: ./conclusions/reporte_mbti_icesi.html
+```
+
+### Contenido del reporte
+
+| Sección | Descripción |
+|---------|-------------|
+| Definición del problema | Pregunta de investigación y delimitación |
+| Objetivos | General y específicos del proyecto |
+| Marco teórico | Teoría Jung/Myers-Briggs, congruencia vocacional |
+| Metodología | MAS, n=70, nivel de confianza 95% |
+| Caracterización de la muestra | Edad, género, semestre, carrera, facultad |
+| Distribución de tipos MBTI | Frecuencias absolutas y relativas, gráfica de barras |
+| Análisis dimensional | E/I, N/S, F/T, J/P con gráficas |
+| Indicadores académicos | Escala Likert 1–5 con media y desviación estándar |
+| **Tabla de contingencia** | Facultad × Tipo MBTI (frecuencias) |
+| **Probabilidad condicional** | P(Facultad \| Tipo MBTI) en porcentaje |
+| Conclusiones | 6 hallazgos basados en los objetivos del proyecto |
+| Limitaciones | Consideraciones metodológicas |
+| Referencias | UNEA 2026, UNITEC 2026, Jung, Myers & Myers |
+
+### Estructura del JSON esperado en `reports/`
+
+```json
+{
+  "questionnaire": {
+    "responses": { "1": 4, "2": 3, ... },
+    "demographics": {
+      "participant_number": 70,
+      "Edad": 17,
+      "Género": "Masculino",
+      "Carrera": "Música",
+      "Semestre": 4,
+      "¿Carrera fue primera opción?": "No",
+      "Seguridad en elección de carrera": 5,
+      "¿Personalidad encaja con la carrera?": 4,
+      "Éxito percibido en la carrera": 4,
+      "Satisfacción con desempeño académico": 3,
+      "Nivel de motivación": 4,
+      "Nivel de estrés académico": 3,
+      "Manejo de carga académica": 4,
+      "Horas de estudio semanales": 6,
+      "Rol en trabajos grupales": "Organizador",
+      "Expresar ideas en público": 4,
+      "Influencia personalidad en rendimiento": 5
+    }
+  },
+  "results": {
+    "mbti_type": "ENFJ",
+    "dimension_scores": { ... },
+    "confidence_scores": { ... }
+  },
+  "demographics": { ... }
+}
+```
+
+### Clasificación por Facultades (Universidad Icesi)
+
+El script asigna automáticamente cada carrera a su facultad:
+
+| Facultad | Ejemplos de carreras |
+|----------|----------------------|
+| Ciencias Administrativas y Económicas | Administración, Economía, Finanzas, Negocios Internacionales |
+| Ingenierías, Diseño y Tecnologías | Ing. de Sistemas, Ing. Industrial, Diseño Industrial |
+| Derecho, Ciencias Humanas y Sociales | Derecho, Psicología, Comunicación Social, Música |
+| Ciencias Naturales y de la Salud | Medicina, Biología, Enfermería, Química |
+
+---
+
+## Interfaz Web (`app.py`)
+
+```bash
 pip install -r requirements.txt
-
-# Set up Gemini API key
-export GEMINI_API_KEY="your-api-key-here"
-# Or on Windows:
-set GEMINI_API_KEY=your-api-key-here
-
-# Run Gradio web interface
+export GEMINI_API_KEY="tu-api-key"
 python app.py
+# Abre http://127.0.0.1:7860
 ```
 
-Then open http://127.0.0.1:7860 in your browser.
+Funcionalidades:
+- Cuestionario de 20/40/60 preguntas con guardado automático
+- Análisis con LLM (Gemini) con referencias a preguntas específicas
+- Exportación del JSON al directorio `reports/`
+- Generación de reporte HTML individual por participante
 
-### 2. Command Line Interface
+---
+
+## CLI (`pf_cli.py`)
 
 ```bash
-# Run CLI questionnaire
+# Cuestionario interactivo
 python pf_cli.py
 
-# Run with test data
-python pf_cli.py --test --test-type INTJ
+# Con datos de prueba (útil para desarrollo)
+python pf_cli.py --test --test-type ENFJ
 
-# Import previous questionnaire
-python pf_cli.py --import-file questionnaire.json
+# Retomar cuestionario guardado
+python pf_cli.py --import-file reports/mbti_questionnaire_ENFJ_participant_70_*.json
 ```
 
-### 3. MCP Server (For LLMs)
+---
+
+## Servidor MCP (`server.py`)
+
+Permite que modelos de lenguaje tomen el test MBTI vía Model Context Protocol.
 
 ```bash
-# Install MCP server dependencies
-pip install -r requirements.txt
-
-# Set up API key
-export GEMINI_API_KEY="your-api-key-here"
-
-# Run MCP server
 python server.py
 ```
 
-Allows LLMs to take MBTI tests via Model Context Protocol. See `MCP_README.md` for details.
+Ver `MCP_README.md` para detalles de integración.
 
-### 4. Live demo on HF Spaces
+---
 
-https://huggingface.co/spaces/Fancellu/mbti-pocketflow
+## Análisis Estadístico del Proyecto
 
-## Usage Examples
+El proyecto aplica las siguientes técnicas del curso:
 
-### Gradio Web Interface
+| Técnica | Aplicación |
+|---------|------------|
+| Medidas de tendencia central | Media de indicadores Likert por tipo MBTI |
+| Medidas de dispersión | Desviación estándar de autopercepción académica |
+| Distribuciones de frecuencia | Frecuencia absoluta y relativa de tipos MBTI |
+| Probabilidad empírica | P(MBTI \| Carrera), P(Facultad \| Tipo MBTI) |
+| Tablas de contingencia | Cruce Facultad × Tipo MBTI |
+| Gráficos | Barras, sectores, histogramas, barras con error |
+
+---
+
+## Dependencias
+
 ```bash
-python app.py
-```
-- **Interactive web interface** at http://127.0.0.1:7860
-- **Question length selection** (20/40/60 questions)
-- **Auto-save responses** as you navigate
-- **Progress tracking** and export functionality
-- **AI analysis** with clickable question references
-- **HTML report generation** with comprehensive insights
-- **Load/save questionnaires** for resuming later
-
-### Command Line Interface
-```bash
-python pf_cli.py
-```
-- **Complete PocketFlow architecture**
-- **Traditional scoring** with optional LLM analysis
-- **Automatic report generation**
-- **Data import/export** in JSON format
-
-### Test Modes
-```bash
-# CLI test with specific MBTI type
-python pf_cli.py --test --test-type ENFP
+pip install -r requirements.txt
 ```
 
-### Import/Export
-```bash
-# Export: Questionnaire data automatically saved as:
-# mbti_questionnaire_pf_partial_[COUNT]q_[TIMESTAMP].json
+Principales:
+- `gradio>=4.0.0` — interfaz web
+- `google-genai>=0.3.0` — análisis LLM
+- `matplotlib` — generación de gráficas
+- `beautifulsoup4` — parsing HTML
+- `markdown` — generación de reportes
 
-# Import: Load previous questionnaire
-python pf_cli.py --import-file questionnaire.json
-```
+---
 
-## MBTI Types Supported
+## Muestra
 
-The application recognizes all 16 MBTI personality types:
+- **n = 70 estudiantes** de pregrado, Universidad Icesi
+- **Muestreo:** Aleatorio Simple (MAS), α = 0.05, p = q = 0.5
+- **Instrumento:** MBTI de 60 preguntas vía [mbti-pocketflow](https://huggingface.co/spaces/Fancellu/mbti-pocketflow)
+- **Periodo de recolección:** Mayo 2026
 
-**Analysts:** INTJ, INTP, ENTJ, ENTP  
-**Diplomats:** INFJ, INFP, ENFJ, ENFP  
-**Sentinels:** ISTJ, ISFJ, ESTJ, ESFJ  
-**Explorers:** ISTP, ISFP, ESTP, ESFP  
+---
 
-## Key Features
+## Referencias
 
-### Question Sets
-- **20 questions:** Quick assessment (5 per dimension)
-- **40 questions:** Balanced assessment (10 per dimension) 
-- **60 questions:** Comprehensive assessment (15 per dimension)
+- UNEA (2026). *Test de personalidad y elección de carrera.* https://www.unea.edu.mx/blog/test-personalidad-y-carrera
+- UNITEC (2026). *¿Qué carrera estudiar según tu personalidad?* https://blogs.unitec.mx/que-carrera-estudiar-segun-tu-personalidad
+- Myers, I. B., & Myers, P. B. (1995). *Gifts Differing.* Davies-Black Publishing.
+- Jung, C. G. (1971). *Psychological Types.* Princeton University Press.
 
-### AI Analysis
-- **Question-specific insights** with clickable references like [Q1](#Q1)
-- **Out-of-character response detection** and explanations
-- **Evidence-based analysis** citing specific question responses
-- **Behavioral pattern identification**
-- **Strengths and growth areas** based on actual responses
+---
 
-### Web Interface Features
-- **Auto-save** responses on navigation
-- **Progress tracking** with completion indicators
-- **Export progress** at any time (partial questionnaires)
-- **Load previous sessions** to continue where you left off
-- **Immediate download** of reports and data
-
-## Development
-
-### Adding New Features
-2. Implement utility functions in `utils/`
-3. Create or modify nodes in `nodes.py`
-4. Update flow in `flow.py`
-5. Test with CLI and web interface
-
-## Dependencies
-
-**Required:**
-- Python 3.8+
-- gradio>=4.0.0 (web interface)
-- google-genai>=0.3.0 (LLM analysis)
-- beautifulsoup4 (HTML parsing)
-- markdown (report generation)
-
-**Optional:**
-- pydantic (enhanced data validation)
-
-See `requirements.txt` for complete list.
-
-## File Overview
-
-- **`gradio_pf_llm.py`** - Main web interface with full LLM analysis
-- **`pf_cli.py`** - Command line interface using PocketFlow architecture
-- **`nodes.py`** - PocketFlow node implementations
-- **`flow.py`** - PocketFlow pipeline definition
-- **`utils/`** - Core utility functions (questionnaire, scoring, reports, LLM)
-
-## License
-
-This project follows PocketFlow's open-source approach for educational and research purposes.
-# mbit
+*Proyecto de estadística descriptiva · Universidad Icesi · 2026*
