@@ -173,6 +173,11 @@ class MBTISimpleReportGenerator:
             result["avg_study_hours"] = sum(study_hours) / len(study_hours)
             result["min_study_hours"] = min(study_hours)
             result["max_study_hours"] = max(study_hours)
+            if len(study_hours) > 1:
+                mean_sh = result["avg_study_hours"]
+                result["std_study_hours"] = (sum((v - mean_sh)**2 for v in study_hours) / len(study_hours)) ** 0.5
+            else:
+                result["std_study_hours"] = 0.0
 
         return result
 
@@ -313,8 +318,9 @@ class MBTISimpleReportGenerator:
             ax = axes[1]
             sem_labels = list(semesters.keys())
             sem_values = list(semesters.values())
-            sem_colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336']
-            ax.bar(sem_labels, sem_values, color=sem_colors[:len(sem_labels)],
+            cmap = plt.cm.get_cmap('tab20', max(len(sem_labels), 1))
+            sem_colors = [cmap(i) for i in range(len(sem_labels))]
+            ax.bar(sem_labels, sem_values, color=sem_colors,
                    edgecolor='black', linewidth=1.5)
             ax.set_ylabel('Count', fontsize=10, fontweight='bold')
             ax.set_title('Semester Distribution', fontsize=11, fontweight='bold')
@@ -335,7 +341,10 @@ class MBTISimpleReportGenerator:
         """Generate simple HTML report with embedded base64 chart images."""
 
         total = stats["total"]
-        e_pct = (stats["extraversion"] / stats["total"]) * 100
+        if total == 0:
+            print("Error: no participants found. Check that ./input has valid JSON files.")
+            return
+        e_pct = (stats["extraversion"] / total) * 100
         i_pct = (stats["introversion"] / stats["total"]) * 100
         n_pct = (stats["intuition"] / stats["total"]) * 100
         s_pct = (stats["sensing"] / stats["total"]) * 100
@@ -711,6 +720,26 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 </tbody>
 </table>
 
+<h3>3b. Career Distribution</h3>
+
+<table>
+<thead>
+<tr>
+<th>Career / Major</th>
+<th>Frequency</th>
+<th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+'''
+
+        for career_name, career_count in sorted(careers.items(), key=lambda x: x[1], reverse=True):
+            career_pct = (career_count / total) * 100
+            html += f'<tr><td>{career_name}</td><td>{career_count}</td><td>{career_pct:.1f}%</td></tr>\n'
+
+        html += '''</tbody>
+</table>
+
 <h3>4. Academic Satisfaction Indicators</h3>
 
 <table>
@@ -756,6 +785,13 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 </table>
 
 <h2 id="conclusions">Conclusions</h2>
+'''
+
+        # IS type counts for conclusion 3
+        is_count = sum(count for mtype, count in self.mbti_counts.items() if mtype.startswith('I') and len(mtype) > 1 and mtype[1] == 'S')
+        is_pct = (is_count / total) * 100
+
+        html += '''
 
 <h3>Main Findings</h3>
 <p>The analysis of ''' + str(total) + ''' university students revealed a notable distribution of MBTI personality types with significant implications for academic and vocational guidance.</p>
@@ -775,13 +811,13 @@ J: ''' + f'{j_pct:.1f}%' + ''' | P: ''' + f'{p_pct:.1f}%' + '''
 <h3>3. Low Representation of Introverted-Sensing Types</h3>
 <p>Objective: Evaluate the diversity of psychological profiles in the sample.</p>
 <div class="conclusion-box">
-<p><strong>Conclusion:</strong> Types that combine introversion (I) with sensing (S) represent only ''' + f'{(1/stats["total"]*100):.1f}%' + ''' of the sample (n=1, ISFJ). This indicates low diversity in terms of analytical and detail-oriented profiles. Such profiles could be valuable in roles requiring attention to detail, thorough analysis, and careful execution of complex tasks. The institution should consider strategies to attract and retain students with these complementary profiles.</p>
+<p><strong>Conclusion:</strong> Types that combine introversion (I) with sensing (S) represent only ''' + f'{is_pct:.1f}%' + ''' of the sample (n=''' + str(is_count) + ''', IS types). This indicates low diversity in terms of analytical and detail-oriented profiles. Such profiles could be valuable in roles requiring attention to detail, thorough analysis, and careful execution of complex tasks. The institution should consider strategies to attract and retain students with these complementary profiles.</p>
 </div>
 
 <h3>4. Relationship Between Personality and Academic Satisfaction</h3>
 <p>Objective: Establish connections between personality type and perceived academic success.</p>
 <div class="conclusion-box">
-<p><strong>Conclusion:</strong> Participants showed moderate to high confidence in their career choice (M=4.2) but a more moderate perception of personality-career fit (M=3.5). This suggests that while many students are confident in their choice, some experience friction between their personality characteristics and academic program requirements. This finding underscores the importance of vocational guidance based on personality typology.</p>
+<p><strong>Conclusion:</strong> Participants showed moderate to high confidence in their career choice (M=''' + avg_cs_str + ''') but a more moderate perception of personality-career fit (M=''' + avg_pf_str + '''). This suggests that while many students are confident in their choice, some experience friction between their personality characteristics and academic program requirements. This finding underscores the importance of vocational guidance based on personality typology.</p>
 </div>
 
 <h3>5. Vocational Guidance Implications</h3>
