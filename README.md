@@ -1,15 +1,3 @@
----
-title: Mbti Pocketflow
-emoji: 🔥
-colorFrom: pink
-colorTo: gray
-sdk: gradio
-sdk_version: 5.38.2
-app_file: app.py
-pinned: false
-short_description: PocketFlow application for conducting Myers-Briggs + llm
----
-
 # MBTI Personality Questionnaire
 
 A PocketFlow-based application for conducting Myers-Briggs Type Indicator (MBTI) personality assessments with both traditional scoring and AI analysis.
@@ -199,6 +187,4 @@ See `requirements.txt` for complete list.
 ## License
 
 This project follows PocketFlow's open-source approach for educational and research purposes.
-# mbit
-# mbit
 # mbit
