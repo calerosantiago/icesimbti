@@ -320,6 +320,28 @@ class DetermineMBTITypeNode(Node):
 
 class GenerateReportNode(Node):
     def prep(self, shared):
+        # Build responses_data here so it's always available, with or without LLM
+        if not shared["analysis"].get("responses_data"):
+            responses = shared["questionnaire"]["responses"]
+            questions = shared["questionnaire"]["questions"]
+            lang = shared["config"].get("language", "en")
+            resp_maps = {
+                "en": {1: "Strongly Disagree", 2: "Disagree", 3: "Neutral", 4: "Agree", 5: "Strongly Agree"},
+                "es": {1: "Muy en desacuerdo", 2: "En desacuerdo", 3: "Neutral", 4: "De acuerdo", 5: "Muy de acuerdo"}
+            }
+            curr_map = resp_maps.get(lang, resp_maps["en"])
+            responses_data = []
+            for q in questions:
+                response_val = responses.get(q['id'], 3)
+                responses_data.append({
+                    'id': q['id'],
+                    'text': q['text'],
+                    'dimension': q.get('dimension', 'Unknown'),
+                    'response': curr_map.get(response_val, "Neutral"),
+                    'value': response_val
+                })
+            shared["analysis"]["responses_data"] = responses_data
+
         return (
             shared["results"]["mbti_type"],
             shared["analysis"],
